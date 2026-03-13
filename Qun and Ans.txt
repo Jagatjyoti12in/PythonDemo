@@ -1,0 +1,105 @@
+
+Question 1 What is a variable in Python? 
+A. A reserved word 
+B. A data type 
+C. A location in memory to store data 
+D. A function 
+
+Ans : C
+
+Question 2 How do you declare a variable in Python? 
+A. var x 
+B. x = variable 
+C. declare x 
+D. x = 4 
+
+Ans : D
+
+Question 3 What is the correct way to comment a single line in Python? 
+A. // This is a comment 
+B. # This is a comment 
+C. /* This is a comment */ 
+D. -- This is a comment 
+
+Ans B
+
+Question 4 Which of the following is a valid variable name in Python? 
+A. 1variable 
+B. my_variable 
+C. global 
+D. variable-1
+
+Ans B
+
+Question 5 How do you swap the values of two variables in Python without using a third variable? 
+A. x = y; y = x 
+B. x, y = y, x 
+C. temp = x; x = y; y = temp 
+D. x + y; y = x; x = y 
+
+Ans B
+
+Question 6 Which of the following data types is immutable in Python? 
+A. List 
+B. Tuple 
+C. Set 
+D. Dictionary 
+
+Ans B
+
+Question 7 What is the output of the following code? 
+ 
+x = 10 
+y = 5  
+z = x + y  
+print(z) 
+
+
+Ans B
+
+Question 8 What does the type() function return in Python? 
+A. The value of the variable 
+B. The type of the variable 
+C. The memory address of the variable 
+D. The length of the variable
+Ans B
+
+Question 9 What is the scope of a global variable in Python? 
+A. Limited to the function it is defined in 
+B. Limited to the module it is defined in 
+C. Limited to the class it is defined in 
+D. Limited to the block it is defined in
+Ans B
+
+Question 10 How do you convert a string to an integer in Python? 
+A. int(string) 
+B. convert(int, string) 
+C. str_to_int(string) 
+D. stringToInt(string
+
+Ans A
+
+Question 11 
+What is the correct way to check if a variable is of a specific type in Python? 
+A. type(var) == "int" 
+B. var.type() == "int" 
+C. isinstance(var, int) 
+D. var.isint() 
+Ans C
+Question 12
+What is the output of the following code? 
+x = 5 
+y = 2
+print(x // y) 
+A. 2.5 
+B. 2 
+C. 2.0 
+D. 3 
+
+Ans B
+
+Question 97
+Ans
+a ="Learning"
+b= 'is fun!'
+a +' '+ b
