@@ -1,0 +1,46 @@
+#13-03-2026 Data Science class'
+
+Python slicing, forward slicing , Backword Slicing , Step Slicing
+All other datatype to interger
+complex and test string got issue
+All other to float expect complex and test sting
+Bool there is no issue at all.
+Student QnA
+Today :-
+Agenda :-
+1. Type casting 
+2. Python Operators
+3. Number Systems
+4. Bit wise operatior
+=== Completed Topic======
+1. Demo session
+2. Python introdiction
+3. Python variable
+4. String indexing and Slicing.
+5. Today 
+Size of the byte
+In type casting while we working on string to complex a user can pass only one string if you pass other string it will throw error
+
+From all other datatype to int and float except (complex & String text)
+all other datatypes to Bool except (no issue)| non zero argument --true | zero argument -- fase
+all otjher datatype to complex except (user cant declare 2 staring together)
+all otjher datatype to string (except text string)
+
+Python Basic Operators
+Arithematic operartrors
+Assignment operator
+implicit type casting mean auto convesation happen
+explicity mean manucal conversation happen
+
+Constructor:-(Teach in OOPs concept)
+Arithematic operartrors (== += -= *= /=)
+Assignment operator
+Operator overloading part of Polymerphism it will come under OOPs.
+
+Unary operator:-
+
+Relational Operator :- a<b , >, <, 
+Logical operator :- and or not  & | not
+1 & 1 -1 rest rest =0 
+and 0 & 0 = 0
+=== print()- Print function
