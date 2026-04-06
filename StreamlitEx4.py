@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st  
 import numpy as np
 # --- App Title and Description ---
 st.title("My First Streamlit App") 
