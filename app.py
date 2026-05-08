@@ -1,103 +1,91 @@
-import streamlit as st
-import pandas as pd
+# -*- coding: utf-8 -*-
+
 import numpy as np
-import scipy.stats as stats
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd
+from flask import Flask, request, render_template
+import joblib
 
-# Set up the title and description of the app
-st.title("Sales Data Analysis for Retail Store")
-st.write("This application analyzes sales data for various product categories.")
+app = Flask(__name__)
+model = joblib.load(r"C:\Users\Jagatjyoti\Jagat_Code\08-05-2026\StudentMarkPred\student_mark_predictor_model.pkl")
 
-# Generate synthetic sales data
-def generate_data():
-    np.random.seed(42)
-    data = {
-        'product_id': range(1, 21),
-        'product_name': [f'Product {i}' for i in range(1, 21)],
-        'category': np.random.choice(['Electronics', 'Clothing', 'Home', 'Sports'], 20),
-        'units_sold': np.random.poisson(lam=20, size=20),
-        'sale_date': pd.date_range(start='2023-01-01', periods=20, freq='D')
-    }
-    return pd.DataFrame(data)
+df = pd.DataFrame()
 
-sales_data = generate_data()
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-# Display the sales data
-st.subheader("Sales Data")
-st.dataframe(sales_data)
+@app.route('/predict',methods=['POST'])
+def predict():
+    global df
+   
+    input_features = [int(x) for x in request.form.values()]
+    features_value = np.array(input_features)
+   
+    #validate input hours
+    if input_features[0] <0 or input_features[0] >24:
+        return render_template('index.html', prediction_text='Please enter valid hours between 1 to 24 if you live on the Earth')
+       
 
-# Descriptive Statistics
-st.subheader("Descriptive Statistics")
-descriptive_stats = sales_data['units_sold'].describe()
-st.write(descriptive_stats)
+    output = model.predict([features_value])[0][0].round(2)
 
-mean_sales = sales_data['units_sold'].mean()
-median_sales = sales_data['units_sold'].median()
-mode_sales = sales_data['units_sold'].mode()[0]
+    # input and predicted value store in df then save in csv file
+    df= pd.concat([df,pd.DataFrame({'Study Hours':input_features,'Predicted Output':[output]})],ignore_index=True)
+    print(df)  
+    df.to_csv('smp_data_from_app.csv')
 
-st.write(f"Mean Units Sold: {mean_sales}")
-st.write(f"Median Units Sold: {median_sales}")
-st.write(f"Mode Units Sold: {mode_sales}")
+    return render_template('index.html', prediction_text='You will get [{}%] marks, when you do study [{}] hours per day '.format(output, int(features_value[0])))
 
-# Group statistics by category
-category_stats = sales_data.groupby('category')['units_sold'].agg(['sum', 'mean', 'std']).reset_index()
-category_stats.columns = ['Category', 'Total Units Sold', 'Average Units Sold', 'Std Dev of Units Sold']
-st.subheader("Category Statistics")
-st.dataframe(category_stats)
 
-# Inferential Statistics
-confidence_level = 0.95
-degrees_freedom = len(sales_data['units_sold']) - 1
-sample_mean = mean_sales
-sample_standard_error = sales_data['units_sold'].std() / np.sqrt(len(sales_data['units_sold']))
+if __name__ == "__main__":
+    app.run(host='127.0.0.1')
 
-# t-score for the confidence level
-t_score = stats.t.ppf((1 + confidence_level) / 2, degrees_freedom)
-margin_of_error = t_score * sample_standard_error
-confidence_interval = (sample_mean - margin_of_error, sample_mean + margin_of_error)
+#if __name__ == "__main__":
+#    app.run(host='0.0.0.0', port=8080)
 
-st.subheader("Confidence Interval for Mean Units Sold")
-st.write(confidence_interval)
 
-# Hypothesis Testing
-t_statistic, p_value = stats.ttest_1samp(sales_data['units_sold'], 20)
 
-st.subheader("Hypothesis Testing (t-test)")
-st.write(f"T-statistic: {t_statistic}, P-value: {p_value}")
 
-if p_value < 0.05:
-    st.write("Reject the null hypothesis: The mean units sold is significantly different from 20.")
-else:
-    st.write("Fail to reject the null hypothesis: The mean units sold is not significantly different from 20.")
 
-# Visualizations
-st.subheader("Visualizations")
 
-# Histogram of units sold
-plt.figure(figsize=(10, 6))
-sns.histplot(sales_data['units_sold'], bins=10, kde=True)
-plt.axvline(mean_sales, color='red', linestyle='--', label='Mean')
-plt.axvline(median_sales, color='blue', linestyle='--', label='Median')
-plt.axvline(mode_sales, color='green', linestyle='--', label='Mode')
-plt.title('Distribution of Units Sold')
-plt.xlabel('Units Sold')
-plt.ylabel('Frequency')
-plt.legend()
-st.pyplot(plt)
 
-# Boxplot for units sold by category
-plt.figure(figsize=(10, 6))
-sns.boxplot(x='category', y='units_sold', data=sales_data)
-plt.title('Boxplot of Units Sold by Category')
-plt.xlabel('Category')
-plt.ylabel('Units Sold')
-st.pyplot(plt)
 
-# Bar plot for total units sold by category
-plt.figure(figsize=(10, 6))
-sns.barplot(x='Category', y='Total Units Sold', data=category_stats)
-plt.title('Total Units Sold by Category')
-plt.xlabel('Category')
-plt.ylabel('Total Units Sold')
-st.pyplot(plt)
+
+
+
+
+
+
+
+
+# import pandas as pd
+# from sklearn.linear_model import LinearRegression
+# import joblib
+# import numpy as np
+# import matplotlib.pyplot as plt
+# import pandas as pd
+# from sklearn.preprocessing import LabelEncoder
+# from sklearn.model_selection import train_test_split
+# from sklearn.impute import SimpleImputer
+
+# df = pd.read_csv(r'C:\Users\Jagatjyoti\Jagat_Code\07-05-2026\StudentMarkPred\student_info.csv')
+
+# df.info()
+# # Handle missing values using SimpleImputer
+
+
+
+# plt.scatter(x_test,y_test)
+# plt.plot(x_train,lr.predict(x_train),color='red')
+
+
+
+# import joblib
+# joblib.dump(lr, 'student_mark_predictor.pkl')
+# # Load the model
+
+# loaded_model = joblib.load('student_mark_predictor.pkl')
+# # Example usage
+# new_data = np.array([[5, 1, 0, 1, 0, 1, 0, 1, 0, 1]])  # Replace with actual feature values
+# predicted_mark = loaded_model.predict(new_data)
+# print(f'Predicted Mark: {predicted_mark[0]}')   
+
