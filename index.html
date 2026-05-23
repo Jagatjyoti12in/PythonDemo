@@ -1,74 +1,47 @@
-<!-- Student Mark Predictor App GUI -->
-
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Student Mark Predictor ML App</title>
-
-  <style>
-
-    h1   {color: blue;}  /* CSS code for heading h1 */
-
-    /* CSS code for button */
-    .button_css {
-    color: #494949 !important;
-    text-transform: uppercase;
-    text-decoration: none;
-    background: #ffffff;
-    padding: 20px;
-    border: 4px solid #494949 !important;
-    display: inline-block;
-    transition: all 0.4s ease 0s;
-    }
-    
-    .button_css:hover {
-    color: #ffffff !important;
-    background: #f6b93b;
-    border-color: #f6b93b !important;
-    transition: all 0.4s ease 0s;
-    }
-  </style>
-
+    <meta charset="UTF-8">
+    <title>Regression Model Prediction</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
-
 <body>
-
-  <!-- Show Oxstandhard Univercity Banner-->
-  <div>
-    <img src="static/images/college_banner2.png" class="w3-border w3-padding" alt="Indian AI Production" style="width:100%">
-  </div>
-
- 
- 
- <div class="login">
-	
-    <!-- Form Get input to predict Marks-->
-    <center>
-    <form action="{{ url_for('predict')}}"method="post">
-        <h1>*** Enter Your Study Hours to Predict Marks ***</h1>
-        
-    	<input align="center" type="number" name="study_hours" placeholder="study hours" required="required" width="48" height="10"/>
-    	<br>
-        
-        <br>
-        
-        <!-- Show button -->
-        <div class="button_cont" align="center"><a class="button_css" href="http://bit.ly/breast-cancer-ml-project" target="_blank" rel="nofollow noopener">
-            <button type="submit" class="btn btn-primary btn-block btn-large"><strong>Predict Marks</strong></button></a>
+    <div class="container">
+        <h1 class="text-center mt-5">Regression Model Prediction</h1>
+        <form action="/predict" method="POST" class="mt-4">
+            <div class="form-group">
+                <label for="Avg. Area Income">Average Area Income:</label>
+                <input type="number" step="any" class="form-control" id="Avg. Area Income" name="Avg. Area Income" required>
+            </div>
+            <div class="form-group">
+                <label for="Avg. Area House Age">Average Area House Age:</label>
+                <input type="number" step="any" class="form-control" id="Avg. Area House Age" name="Avg. Area House Age" required>
+            </div>
+            <div class="form-group">
+                <label for="Avg. Area Number of Rooms">Average Area Number of Rooms:</label>
+                <input type="number" step="any" class="form-control" id="Avg. Area Number of Rooms" name="Avg. Area Number of Rooms" required>
+            </div>
+            <div class="form-group">
+                <label for="Avg. Area Number of Bedrooms">Average Area Number of Bedrooms:</label>
+                <input type="number" step="any" class="form-control" id="Avg. Area Number of Bedrooms" name="Avg. Area Number of Bedrooms" required>
+            </div>
+            <div class="form-group">
+                <label for="Area Population">Area Population:</label>
+                <input type="number" step="any" class="form-control" id="Area Population" name="Area Population" required>
+            </div>
+            <div class="form-group">
+                <label for="model">Select Model:</label>
+                <select class="form-control" id="model" name="model">
+                    {% for model_name in model_names %}
+                        <option value="{{ model_name }}">{{ model_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Predict</button>
+        </form>
+        <div class="text-center mt-4">
+            <a href="/results" class="btn btn-secondary">View Model Evaluation Results</a>
         </div>
-        
-    </form>
-    </center>
-   
-   <!-- Show predicted output using ML model --> 
-   <div>
-       <center>
-   <h2>{{ prediction_text }}</h2>
-       </center>
-   </div>
-
- </div>
-
+    </div>
 </body>
 </html>

@@ -1,143 +1,48 @@
-import gradio as gr
+from flask import Flask, render_template, request
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import ollama
+import pickle
 
-# Function to Generate AI Insights
-def generate_ai_insights(df_summary):
+app = Flask(__name__)
 
-    prompt = f"""
-Analyze the dataset summary and provide useful insights:
+# Load models
+model_names = [
+    'LinearRegression', 'RobustRegression', 'RidgeRegression', 'LassoRegression', 'ElasticNet', 
+    'PolynomialRegression', 'SGDRegressor', 'ANN', 'RandomForest', 'SVM', 'LGBM', 
+    'XGBoost', 'KNN'
+]
+models = {name: pickle.load(open(f'{name}.pkl', 'rb')) for name in model_names}
 
-{df_summary}
-"""
+# Load evaluation results
+results_df = pd.read_csv('model_evaluation_results.csv')
 
-    response = ollama.chat(
-        model="llama3",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
+@app.route('/')
+def index():
+    return render_template('index.html', model_names=model_names)
 
-    return response["message"]["content"]
+@app.route('/predict', methods=['POST'])
+def predict():
+    model_name = request.form['model']
+    input_data = {
+        'Avg. Area Income': float(request.form['Avg. Area Income']),
+        'Avg. Area House Age': float(request.form['Avg. Area House Age']),
+        'Avg. Area Number of Rooms': float(request.form['Avg. Area Number of Rooms']),
+        'Avg. Area Number of Bedrooms': float(request.form['Avg. Area Number of Bedrooms']),
+        'Area Population': float(request.form['Area Population'])
+    }
+    input_df = pd.DataFrame([input_data])
+    
+    if model_name in models:
+        model = models[model_name]
+        prediction = model.predict(input_df)[0]
+        return render_template('results.html', prediction=prediction, model_name=model_name)
+    else:
+        return jsonify({'error': 'Model not found'}), 400
 
+@app.route('/results')
+def results():
+    return render_template('model.html', tables=[results_df.to_html(classes='data')], titles=results_df.columns.values)
 
-# Function to Generate Visualizations
-def generate_visualizations(df):
-
-    plot_paths = []
-
-    # Histograms
-    for col in df.select_dtypes(include=['number']).columns:
-
-        plt.figure(figsize=(6, 4))
-
-        sns.histplot(df[col], bins=30, kde=True, color="blue")
-
-        plt.title(f"Distribution of {col}")
-
-        path = f"{col}_distribution.png"
-
-        plt.savefig(path)
-
-        plot_paths.append(path)
-
-        plt.close()
-
-    # Correlation Heatmap
-    numeric_df = df.select_dtypes(include=['number'])
-
-    if not numeric_df.empty:
-
-        plt.figure(figsize=(8, 5))
-
-        sns.heatmap(
-            numeric_df.corr(),
-            annot=True,
-            cmap='coolwarm',
-            fmt=".2f",
-            linewidths=0.5
-        )
-
-        plt.title("Correlation Heatmap")
-
-        path = "correlation_heatmap.png"
-
-        plt.savefig(path)
-
-        plot_paths.append(path)
-
-        plt.close()
-
-    return plot_paths
-
-
-# Main EDA Function
-def eda_analysis(file_path):
-
-    # Load CSV
-    df = pd.read_csv(file_path)
-
-    # Fill missing numeric values
-    for col in df.select_dtypes(include=['number']).columns:
-        df[col] = df[col].fillna(df[col].mean())
-
-    # Fill missing categorical values
-    for col in df.select_dtypes(include=['object']).columns:
-        df[col] = df[col].fillna(df[col].mode()[0])
-
-    # Summary
-    summary = df.describe(include='all').to_string()
-
-    # Missing values report
-    missing_values = df.isnull().sum().to_string()
-
-    # AI insights
-    insights = generate_ai_insights(summary)
-
-    # Generate plots
-    plot_paths = generate_visualizations(df)
-
-    report = f"""
-Data Loaded Successfully!
-
-========================
-SUMMARY
-========================
-
-{summary}
-
-========================
-MISSING VALUES
-========================
-
-{missing_values}
-
-========================
-AI INSIGHTS
-========================
-
-{insights}
-"""
-
-    return report, plot_paths
-
-
-# Gradio Interface
-demo = gr.Interface(
-    fn=eda_analysis,
-    inputs=gr.File(type="filepath"),
-    outputs=[
-        gr.Textbox(label="EDA Report"),
-        gr.Gallery(label="Data Visualizations")
-    ],
-    title="📊 AI-Powered Exploratory Data Analysis",
-    description="Upload a CSV file and get automated EDA insights with visualizations."
-)
-
-# Launch App
-demo.launch(share=True)
+if __name__ == '__main__':
+    app.run(debug=True)
+    
+    
